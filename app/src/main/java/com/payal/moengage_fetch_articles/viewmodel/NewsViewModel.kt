@@ -10,8 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,10 +33,8 @@ class NewsViewModel @Inject constructor(private val newsRepository: NewsReposito
     }
 
     private fun sortNewsByDate(newsList: List<News>, ascending: Boolean = true): List<News> {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-
         return newsList.sortedBy {
-            dateFormat.parse(it.publishedAt)
+            it.publishedAt
         }.let {
             if (!ascending) it.reversed() else it
         }

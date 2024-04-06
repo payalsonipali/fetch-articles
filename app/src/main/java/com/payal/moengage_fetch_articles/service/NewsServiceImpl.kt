@@ -19,7 +19,9 @@ class NewsServiceImpl @Inject constructor() : NewsService {
             val inputStream = connection.inputStream
             val json = inputStream.bufferedReader().use { it.readText() }
             val response = Gson().fromJson(json, NewsResponse::class.java)
-            return response.articles
+            return response.articles.map { newsItem ->
+                newsItem.toNewsWithFormattedDate()
+            }
         } else {
             throw IOException("Failed to fetch news: HTTP ${connection.responseCode}")
         }
