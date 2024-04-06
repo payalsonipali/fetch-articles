@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Moengage_Fetch_Articles</string>
+    <string name="published_text">Published :</string>
+    <string name="author_text">Author :</string>
+</resources>
