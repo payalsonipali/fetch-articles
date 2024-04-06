@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Moengage_Fetch_Articles" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Moengage_Fetch_Articles" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+    <style name="MyActionBar" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/teal_200</item>
+    </style>
+
+
 </resources>

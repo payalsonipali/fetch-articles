@@ -1,33 +1,54 @@
 package com.payal.moengage_fetch_articles.viewmodel
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.payal.moengage_fetch_articles.model.News
+import com.payal.moengage_fetch_articles.model.NewsState
 import com.payal.moengage_fetch_articles.repository.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class NewsViewModel @Inject constructor(private val newsRepository: NewsRepository) : ViewModel() {
-    private val _news = MutableLiveData<List<News>>()
-    val news: LiveData<List<News>> = _news
+    private val _news = MutableStateFlow<NewsState>(NewsState.Loading)
+    val news: StateFlow<NewsState> = _news
 
     init {
-        Log.d("taggg", "000000")
         fetchNews()
     }
 
     private fun fetchNews() {
-        Log.d("taggg", "111111111")
-
         viewModelScope.launch(Dispatchers.IO) {
-            val newsList = newsRepository.fetchNews()
-            _news.postValue(newsList)
+            val result = newsRepository.fetchNews()
+            result.onSuccess { newsList ->
+                _news.value = NewsState.Success(newsList)
+            }.onFailure { exception ->
+                _news.value = NewsState.Error(exception.message ?: "Something went wrong")
+            }
+        }
+    }
+
+    private fun sortNewsByDate(newsList: List<News>, ascending: Boolean = true): List<News> {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+
+        return newsList.sortedBy {
+            dateFormat.parse(it.publishedAt)
+        }.let {
+            if (!ascending) it.reversed() else it
+        }
+    }
+
+    fun sortNews(ascending: Boolean = true) {
+        val currentNewsState = _news.value
+        if (currentNewsState is NewsState.Success) {
+            val sortedNews = sortNewsByDate(currentNewsState.news, ascending)
+            _news.value = NewsState.Success(sortedNews)
         }
     }
 }

@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">Moengage_Fetch_Articles</string>
+    <string name="app_name">Articles</string>
     <string name="published_text">Published :</string>
     <string name="author_text">Author :</string>
+    <string name="today_news">Today News</string>
+    <string name="sort_by_newest">Sort by Newest</string>
+    <string name="sort_by_oldest">Sort by Oldest</string>
 </resources>

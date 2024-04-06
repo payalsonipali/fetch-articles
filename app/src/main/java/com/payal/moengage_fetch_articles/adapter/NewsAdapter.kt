@@ -1,9 +1,11 @@
 package com.payal.moengage_fetch_articles.adapter
 
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.payal.moengage_fetch_articles.R
 import com.payal.moengage_fetch_articles.databinding.ArticleItemBinding
 import com.payal.moengage_fetch_articles.model.News
 
@@ -25,6 +27,11 @@ class NewsAdapter(private val newsList: List<News>, private val onItemClick: (St
     class ViewHolder(private val binding: ArticleItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(news: News) {
             binding.news = news
+            Glide.with(itemView)
+                .load(news.urlToImage)
+                .placeholder(R.drawable.ic_launcher_background)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(binding.img)
             binding.executePendingBindings()
         }
     }
