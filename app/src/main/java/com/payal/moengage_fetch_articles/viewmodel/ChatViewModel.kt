@@ -1,6 +1,6 @@
 package com.payal.moengage_fetch_articles.viewmodel
 
-import android.net.http.HttpException
+import android.content.ContentValues.TAG
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresExtension
@@ -40,14 +40,13 @@ class ChatViewModel @Inject constructor(val fcmService: FCMApiService) : ViewMod
         )
     }
 
+    //get user device token to send notification on particular device
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     private fun getToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
-                Log.w("taggg", "Fetching FCM registration token failed", task.exception)
                 return@OnCompleteListener
             }
-            Log.d("taggg","token : ${task.result}")
             onRemoteTokenChange(task.result)
         })
     }
@@ -56,12 +55,12 @@ class ChatViewModel @Inject constructor(val fcmService: FCMApiService) : ViewMod
     fun sendMessage(isBroadcast: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             getToken()
-            Log.d("taggg","token : ${state.remoteToken}")
             val message = SendMessageDto(
+                //Broadcast will check send notification to particular user or all users
                 to = if (isBroadcast) null else state.remoteToken,
                 notificationBody = NotificationBody(
-                    title = "New Message",
-                    body = "Hey, you got something new !"
+                    title = "New Message", // we can pass any message
+                    body = "Hey, you got something new !" // Add any content
                 )
             )
 
@@ -71,8 +70,8 @@ class ChatViewModel @Inject constructor(val fcmService: FCMApiService) : ViewMod
                 } else {
                     fcmService.sendMessage(message)
                 }
-            } catch (e: HttpException) {
-                e.printStackTrace()
+            } catch (e: Exception) {
+                Log.d(TAG,"Something went wrong : ${e.message}")
             }
         }
     }

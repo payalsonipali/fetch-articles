@@ -8,6 +8,7 @@ import java.net.URL
 
 class FCMApiServiceImpl : FCMApiService {
 
+    //send notification to particular user
     @Throws(IOException::class)
     override suspend fun sendMessage(body: SendMessageDto): String {
         val url = URL("http://192.168.253.73:8080/send")
@@ -33,6 +34,7 @@ class FCMApiServiceImpl : FCMApiService {
         }
     }
 
+    //send message to all users
     override suspend fun broadcast(body: SendMessageDto) : String {
         val url = URL("http://192.168.253.73:8080/broadcast")
         try {
