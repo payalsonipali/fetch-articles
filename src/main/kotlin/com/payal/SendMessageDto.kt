@@ -26,9 +26,10 @@ fun SendMessageDto.toMessage(): Message {
         )
         .apply {
             if(to == null) {
+                // Send notification to all users
                 setTopic("articles")
             } else {
-                println("to : $to")
+                // Send notification to particular user
                 setToken(to)
             }
         }
