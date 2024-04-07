@@ -9,21 +9,25 @@ import java.net.URL
 import javax.inject.Inject
 
 class NewsServiceImpl @Inject constructor() : NewsService {
-    @Throws(IOException::class)
     override suspend fun getNews(): List<News> {
-        val url = URL("https://candidate-test-data-moengage.s3.amazonaws.com/Android/news-api-feed/staticResponse.json")
-        val connection = url.openConnection() as HttpURLConnection
-        connection.connect()
+        try {
+            val url =
+                URL("https://candidate-test-data-moengage.s3.amazonaws.com/Android/news-api-feed/staticResponse.json")
+            val connection = url.openConnection() as HttpURLConnection
+            connection.connect()
 
-        if (connection.responseCode == HttpURLConnection.HTTP_OK) {
-            val inputStream = connection.inputStream
-            val json = inputStream.bufferedReader().use { it.readText() }
-            val response = Gson().fromJson(json, NewsResponse::class.java)
-            return response.articles.map { newsItem ->
-                newsItem.toNewsWithFormattedDate()
+            if (connection.responseCode == HttpURLConnection.HTTP_OK) {
+                val inputStream = connection.inputStream
+                val json = inputStream.bufferedReader().use { it.readText() }
+                val response = Gson().fromJson(json, NewsResponse::class.java)
+                return response.articles.map { newsItem ->
+                    newsItem.toNewsWithFormattedDate()
+                }
+            } else {
+                throw IOException("Failed to fetch news: HTTP ${connection.responseCode}")
             }
-        } else {
-            throw IOException("Failed to fetch news: HTTP ${connection.responseCode}")
+        } catch (e: Exception) {
+            throw Exception("Something went wrong: ${e.message}")
         }
     }
 }

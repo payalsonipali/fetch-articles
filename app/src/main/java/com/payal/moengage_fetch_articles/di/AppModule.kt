@@ -1,7 +1,8 @@
 package com.payal.moengage_fetch_articles.di
 
-import com.payal.moengage_fetch_articles.model.NewsResponse
 import com.payal.moengage_fetch_articles.repository.NewsRepository
+import com.payal.moengage_fetch_articles.service.FCMApiService
+import com.payal.moengage_fetch_articles.service.FCMApiServiceImpl
 import com.payal.moengage_fetch_articles.service.NewsService
 import com.payal.moengage_fetch_articles.service.NewsServiceImpl
 import dagger.Module
@@ -21,5 +22,10 @@ class AppModule {
     @Provides
     fun provideNewsRepository(newsService: NewsService): NewsRepository {
         return NewsRepository(newsService)
+    }
+
+    @Provides
+    fun provideFCMService(): FCMApiService {
+        return FCMApiServiceImpl()
     }
 }
